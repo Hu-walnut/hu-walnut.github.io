@@ -1,0 +1,104 @@
+<style>
+    /* 全局基础样式 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    /* 容器系统 */
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* 内容区块系统 */
+    section {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 4rem 0;
+    }
+
+    /* 联系区块特别样式 */
+    #contact {
+        background: #f8f9fa;
+    }
+
+    #contact .container {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    #contact img {
+        width: min(100%, 300px);
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 头部样式 */
+    header {
+        background-color: #f8f9fa;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 24px;
+    }
+
+    nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        gap: 20px;
+    }
+
+    nav ul li {
+        display: inline;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        nav ul {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        section {
+            padding: 2rem 0;
+        }
+    }
+</style>
+<div class="container">
+    <h1><a href="#">现代风格装修</a></h1>
+    <nav>
+        <ul>
+            <li><a href="/index.html#about">关于我们</a></li>
+            <li><a href="/index.html#services">服务项目</a></li>
+            <li><a href="/index.html#portfolio">装修案例</a></li>
+            <li><a href="/index.html#contact">联系我们</a></li>
+        </ul>
+    </nav>
+</div>
