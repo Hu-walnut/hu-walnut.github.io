@@ -1,27 +1,37 @@
-  /* 通用样式 */
-  body {
+/* ================= 通用样式 ================= */
+/* 基础页面样式 */
+body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     line-height: 1.6;
     color: #333;
 }
+
+/* 页面内容容器 */
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
+
+/* 标题样式 */
 h1, h2 {
     color: #444;
 }
+
+/* 链接通用样式 */
 a {
     text-decoration: none;
     color: #007BFF;
+    transition: color 0.3s ease;
 }
 a:hover {
     color: #0056b3;
 }
+
+/* 按钮通用样式 */
 .btn {
     display: inline-block;
     padding: 10px 20px;
@@ -34,7 +44,8 @@ a:hover {
     background-color: #0056b3;
 }
 
-/* Hero 部分样式 */
+/* ================= 页面区块样式 ================= */
+/* Hero头部大图 */
 #hero {
     background: url('/htmlCssJs/images/3.jpg') no-repeat center center/cover;
     color: #fff;
@@ -45,12 +56,8 @@ a:hover {
     font-size: 36px;
     margin-bottom: 20px;
 }
-#hero p {
-    font-size: 18px;
-    margin-bottom: 30px;
-}
 
-/* 关于我们部分样式 */
+/* 关于我们区块 */
 #about {
     padding: 50px 0;
     text-align: center;
@@ -60,11 +67,10 @@ a:hover {
     margin: 0 auto;
 }
 
-/* 服务项目部分样式 */
+/* 服务项目区块 */
 #services {
     background-color: #f8f9fa;
     padding: 50px 0;
-    text-align: center;
 }
 #services ul {
     list-style: none;
@@ -81,11 +87,7 @@ a:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* 装修案例部分样式 */
-#portfolio {
-    padding: 50px 0;
-    text-align: center;
-}
+/* 案例展示图库 */
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -101,16 +103,105 @@ a:hover {
     transform: scale(1.05);
 }
 
-/* 联系我们部分样式 */
-#contact {
-    padding: 50px 0;
-    text-align: center;
+/* ================= 定制滑块样式 ================= */
+.custom-slider {
+    position: relative;
+    max-width: 1200px;
+    margin: 2rem auto;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
-#contact p {
-    margin-bottom: 20px;
+
+.slider-track {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-#contact img {
-    max-width: 200px;
-    height: auto;
-    margin-top: 20px;
+
+.slide {
+    min-width: 100%;
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    background: #f8f9fa;
+}
+
+/* 媒体内容区块 */
+.media-box {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+}
+.media-box img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    transition: transform 0.3s;
+    cursor: zoom-in;
+}
+.media-box:hover img {
+    transform: scale(1.03);
+}
+
+/* 文字说明区块 */
+.text-box {
+    flex: 1;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 导航按钮 */
+.prev-btn,
+.next-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 1rem 1.2rem;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.prev-btn:hover,
+.next-btn:hover {
+    background: #2c3e50;
+}
+.prev-btn { left: 20px; }
+.next-btn { right: 20px; }
+
+/* 强调文字 */
+.highlight {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+/* ================= 响应式设计 ================= */
+@media (max-width: 768px) {
+    /* 移动端滑块布局 */
+    .slide {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    
+    /* 图片高度调整 */
+    .media-box img {
+        height: 300px;
+    }
+    
+    /* 导航按钮尺寸优化 */
+    .prev-btn,
+    .next-btn {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    /* 服务项目列表垂直排列 */
+    #services ul {
+        flex-direction: column;
+    }
 }
