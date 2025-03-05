@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D房间展示</title>
+    <style>
+        canvas { width: 100%; height: 100%; }
+        body { margin: 0; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <canvas id="glCanvas"></canvas>
+
+    <script>
+        let camera = {
+            position: [0, 2, 5],   // 初始相机位置
+            rotation: [0, 0, 0]     // 旋转角度（俯仰、偏航、滚转）
+        };
+
+        // 初始化WebGL上下文
+        const canvas = document.getElementById('glCanvas');
+        const gl = canvas.getContext('webgl');
+
+        // 顶点着色器
+        const vsSource = `
+            attribute vec4 aVertexPosition;
+            uniform mat4 uModelViewMatrix;
+            uniform mat4 uProjectionMatrix;
+
+            void main() {
+                gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+            }
+        `;
+
+        // 片段着色器
+        const fsSource = `
+            void main() {
+                gl_FragColor = vec4(0.7, 0.7, 0.7, 1.0); // 灰色墙面
+            }
+        `;
+
+        // 创建着色器程序
+        const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+        
+        // 房间顶点数据（立方体）
+        const vertices = new Float32Array([
+            // 地板
+            -5, 0, -5,  5, 0, -5,  5, 0, 5,
+            -5, 0, -5,  5, 0, 5,  -5, 0, 5,
+
+            // 天花板
+            -5, 3, -5,  5, 3, -5,  5, 3, 5,
+            -5, 3, -5,  5, 3, 5,  -5, 3, 5,
+
+            // 墙面（前后左右）
+            -5, 0, -5,  5, 0, -5,  5, 3, -5,
+            -5, 0, -5,  5, 3, -5, -5, 3, -5,
+
+            -5, 0, 5,  5, 0, 5,  5, 3, 5,
+            -5, 0, 5,  5, 3, 5, -5, 3, 5,
+
+            -5, 0, -5, -5, 0, 5, -5, 3, 5,
+            -5, 0, -5, -5, 3, 5, -5, 3, -5,
+
+            5, 0, -5, 5, 0, 5, 5, 3, 5,
+            5, 0, -5, 5, 3, 5, 5, 3, -5
+        ]);
+
+        // 初始化缓冲区
+        const vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+        // 渲染循环
+        function render() {
+            gl.clearColor(0.1, 0.1, 0.1, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            gl.enable(gl.DEPTH_TEST);
+
+            // 设置投影矩阵
+            const projectionMatrix = mat4.create();
+            mat4.perspective(projectionMatrix, Math.PI/4, canvas.width/canvas.height, 0.1, 100.0);
+
+            // 设置模型视图矩阵
+            const modelViewMatrix = mat4.create();
+            mat4.translate(modelViewMatrix, modelViewMatrix, camera.position);
+            mat4.rotateX(modelViewMatrix, modelViewMatrix, camera.rotation[0]);
+            mat4.rotateY(modelViewMatrix, modelViewMatrix, camera.rotation[1]);
+
+            // 绘制房间
+            gl.useProgram(shaderProgram);
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+            const position = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
+            gl.enableVertexAttribArray(position);
+            gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
+
+            gl.uniformMatrix4fv(
+                gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+                false,
+                projectionMatrix
+            );
+            gl.uniformMatrix4fv(
+                gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+                false,
+                modelViewMatrix
+            );
+
+            gl.drawArrays(gl.TRIANGLES, 0, vertices.length/3);
+            requestAnimationFrame(render);
+        }
+
+        // 初始化着色器程序
+        function initShaderProgram(gl, vsSource, fsSource) {
+            const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+            const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+            const shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+            return shaderProgram;
+        }
+
+        function loadShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            return shader;
+        }
+
+        // 启动渲染
+        render();
+
+        // 添加相机控制
+        document.addEventListener('keydown', (e) => {
+            const speed = 0.1;
+            switch(e.key.toLowerCase()) {
+                case 'w': camera.position[2] -= speed; break;
+                case 's': camera.position[2] += speed; break;
+                case 'a': camera.position[0] -= speed; break;
+                case 'd': camera.position[0] += speed; break;
+            }
+        });
+
+        let mouseDown = false;
+        canvas.addEventListener('mousedown', () => mouseDown = true);
+        canvas.addEventListener('mouseup', () => mouseDown = false);
+        canvas.addEventListener('mousemove', (e) => {
+            if(mouseDown) {
+                camera.rotation[1] += e.movementX * 0.01;
+                camera.rotation[0] += e.movementY * 0.01;
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
+</body>
+</html>
