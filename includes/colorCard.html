@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专业色卡展示</title>
+    <style>
+        /* 基础重置与变量定义 */
+        :root {
+            --primary-text: #2d3436;
+            --secondary-text: #636e72;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--primary-text);
+            background: var(--background);
+            padding: 2rem 1rem;
+        }
+
+        /* 布局容器 */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* 标题样式 */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--secondary-text);
+        }
+
+        /* 色卡网格布局 */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        /* 单个色卡样式 */
+        .color-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .color-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 颜色预览区域 */
+        .color-preview {
+            position: relative;
+            height: 160px;
+            display: flex;
+            align-items: flex-end;
+            padding: 1rem;
+        }
+
+        /* 颜色信息面板 */
+        .color-meta {
+            padding: 1.5rem;
+            background: var(--card-bg);
+        }
+
+        .color-name {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .color-code {
+            font-family: 'Fira Code', monospace;
+            color: var(--secondary-text);
+            font-size: 0.9em;
+        }
+
+        /* 复制提示 */
+        .copy-notice {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.85em;
+            color: var(--secondary-text);
+            transition: var(--transition);
+        }
+
+        .color-card:hover .copy-notice {
+            bottom: 10px;
+        }
+
+        /* 复制反馈弹窗 */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9em;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .toast.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+    <div class="container">
+        <header class="header">
+            <h1>专业色彩库</h1>
+            <p>点击色卡复制颜色代码</p>
+        </header>
+
+        <div class="color-grid">
+            <!-- 颜色卡片模板 -->
+            <article class="color-card" data-color="#ff6b6b">
+                <div class="color-preview" style="background-color: #ff6b6b;">
+                    <span class="copy-notice">点击复制 HEX 值</span>
+                </div>
+                <div class="color-meta">
+                    <h2 class="color-name">珊瑚红</h2>
+                    <div class="color-code">
+                        HEX: #FF6B6B<br>
+                        RGB: 255, 107, 107<br>
+                        HSL: 0°, 100%, 71%
+                    </div>
+                </div>
+            </article>
+
+            <!-- 更多颜色卡片 -->
+            <article class="color-card" data-color="#4ECDC4">
+                <div class="color-preview" style="background-color: #4ECDC4;">
+                    <span class="copy-notice">点击复制 HEX 值</span>
+                </div>
+                <div class="color-meta">
+                    <h2 class="color-name">浅水蓝</h2>
+                    <div class="color-code">
+                        HEX: #4ECDC4<br>
+                        RGB: 78, 205, 196<br>
+                        HSL: 176°, 57%, 55%
+                    </div>
+                </div>
+            </article>
+
+            <article class="color-card" data-color="#2F3542">
+                <div class="color-preview" style="background-color: #2F3542;">
+                    <span class="copy-notice">点击复制 HEX 值</span>
+                </div>
+                <div class="color-meta">
+                    <h2 class="color-name">深灰蓝</h2>
+                    <div class="color-code">
+                        HEX: #2F3542<br>
+                        RGB: 47, 53, 66<br>
+                        HSL: 221°, 17%, 22%
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <!-- 复制反馈 -->
+        <div class="toast" id="toast">颜色代码已复制！</div>
+    </div>
+
+    <script>
+        // 初始化颜色卡片
+        function initColorCards() {
+            // 自动调整文字颜色对比度
+            document.querySelectorAll('.color-preview').forEach(preview => {
+                const bgColor = getComputedStyle(preview).backgroundColor;
+                const rgb = bgColor.match(/\d+/g).map(Number);
+                const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+                preview.style.color = brightness > 150 ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)';
+            });
+
+            // 绑定点击事件
+            document.querySelectorAll('.color-card').forEach(card => {
+                card.addEventListener('click', handleCardClick);
+            });
+        }
+
+        // 处理卡片点击
+        function handleCardClick(event) {
+            const color = this.dataset.color;
+            copyToClipboard(color);
+            showFeedback();
+        }
+
+        // 复制到剪贴板
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (err) {
+                console.error('复制失败:', err);
+            }
+        }
+
+        // 显示反馈提示
+        function showFeedback() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('visible');
+            setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 1500);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', initColorCards);
+    </script>
+</body>
+</html>
+</html>
+</html>
